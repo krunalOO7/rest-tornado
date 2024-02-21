@@ -2,9 +2,6 @@ from tornado.web import Application, RequestHandler
 from tornado.ioloop import IOLoop
 import sqlite3 
 
-
- 
-
 class MainHandler(RequestHandler):
     def get(self):
         self.write('REST API')
@@ -28,12 +25,11 @@ class UserInfoHandler(RequestHandler):
             else:
                 cnt.execute(f"insert into users values({id}, '{name}');")
                 cnt.commit()
-                self.write(f'{id}: {name} added successfully\n')
+                self.write('user added successfully\n')
+                self.write({id:name})
         except:
             self.write("something went wrong please try again letter!")
 
-
-          
     
     def get(self):
         
@@ -44,6 +40,7 @@ class UserInfoHandler(RequestHandler):
             res = cursor.fetchone()
             
             if(not res is None):
+                self.write("user found successfully\n")
                 self.write({res[0]:res[1]})
         
             else:
@@ -64,13 +61,13 @@ class UserInfoHandler(RequestHandler):
             if(not res is None):
                 cnt.execute(f"update users set name='{name}' where id={id};")
                 cnt.commit()
-                self.write(f'user name {name} has been updated successfully!')
+                self.write(f'user name updated successfully\n')
+                self.write({id:name})
             else:
                 self.write(f'No User Found With Given Id : {id} ')
         except:
-            print("something  went wrong!")
+            self.write("something  went wrong!")
        
-        
 
     def delete(self):
         
